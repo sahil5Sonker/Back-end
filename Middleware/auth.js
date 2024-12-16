@@ -1,21 +1,17 @@
-import jwt from "jsonwebtoken";
-import { User } from "../Models/User.js";
+import jwt from 'jsonwebtoken';
 
-export const Authenticated = async (req, res, next) => {
-  const token = req.header("Auth");
+export const Authenticated = (req, res, next) => {
+  const token = req.header('Authorization')?.split(' ')[1];  // Bearer token
 
-  if (!token) return res.json({ message: "Login first" });
+  if (!token) {
+    return res.status(401).json({ message: 'Access Denied' });
+  }
 
-  const decoded = jwt.verify(token, "!@#$%^&*()");
-
-  const id = decoded.userId;
-
-  let user = await User.findById(id);
-
-  if (!user) return res.json({ message: "User not exist" });
-
-  req.user = user;
-  next();
-
-  // console.log(decoded)
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.userId = decoded.userId;
+    next(); // Move to the next middleware or route handler
+  } catch (error) {
+    res.status(401).json({ message: 'Invalid Token' });
+  }
 };
