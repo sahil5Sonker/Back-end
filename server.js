@@ -30,7 +30,7 @@ app.get('/', (req, res) => res.json({ message: "This is the home route" }));
 app.use('/api/user', UserRouter);
 
 // Product router
-app.use('/api/products', ProductRouter);
+app.use('/api/product', ProductRouter);
 
 // Cart router
 app.use('/api/cart',CartRouter)

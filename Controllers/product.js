@@ -28,9 +28,9 @@ export const getProducts = async (req,res) =>{
 // find product by id
 export const getProductById = async (req, res) => {
   const id = req.params.id;
-let product = await Products.findById(id)
-if(!product) return res.json({message:'Invalid Id'})
-res.json({ message: "Specific product", product });
+let products = await Products.findById(id)
+if(!products) return res.json({message:'Invalid Id'})
+res.json({ message: "Specific product", products });
 };
 
 // update product by id

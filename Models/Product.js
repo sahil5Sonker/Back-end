@@ -8,9 +8,9 @@ const productSchema = new mongoose.Schema({
   qty: { type: String, require: true },
   imgSrc: { type: String, require: true },
   createdAt: { type: Date, default: Date.now },
-  phoneNumber: { type: String,},
-  country : { type: String, require: true},
-  region:{ type: String, require: true},
+  // phoneNumber: { type: String,},
+  // country : { type: String, require: true},
+  // region:{ type: String, require: true},
 
 });
 
