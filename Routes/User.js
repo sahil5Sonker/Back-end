@@ -1,5 +1,5 @@
 import express from 'express';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';  // Use bcryptjs instead of bcrypt
 import jwt from 'jsonwebtoken';
 import User from '../Models/User.js';  // Default import for the User model
 import { Authenticated } from '../Middleware/auth.js';
@@ -17,7 +17,7 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'Email already exists' });
     }
 
-    // Hash the password
+    // Hash the password with bcryptjs
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create and save user
@@ -41,7 +41,7 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // Verify password
+    // Verify password with bcryptjs
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
       return res.status(400).json({ message: 'Invalid credentials' });
