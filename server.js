@@ -22,6 +22,9 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
+// app.use(cors({
+//   origin: 'https://theagrigoods.com/', // replace with your Hostinger domain
+// }));
 
 // Home testing route
 app.get('/', (req, res) => res.json({ message: "This is the home route" }));
