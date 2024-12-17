@@ -1,57 +1,73 @@
-import { json } from "express";
-import { User } from "../Models/User.js";
-import bcrypt from "bcryptjs";
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-// user register
+import User from '../Models/User.js';
+
+// Register User
 export const register = async (req, res) => {
-  const { firstname,lastname, email, password } = req.body;
+  const { firstName, lastName, email, password } = req.body;
+
+  if (!firstName || !lastName || !email || !password) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
   try {
-    let user = await User.findOne({ email });
-    if (user)
-      return res.json({ message: "User Already exist ", success: false });
-    const hashPass = await bcrypt.hash(password, 10);
-    user = await User.create({ firstname,lastname, email, password: hashPass });
-    res.json({
-      message: "User register successfully...! ",
-      user,
-      success: true,
-    });
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already exists" });
+    }
+
+    // Hash the password with bcrypt
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create and save the user
+    const newUser = new User({ firstName, lastName, email, password: hashedPassword });
+    await newUser.save();
+
+    res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
-    res.json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
-// user login
+// Login User
 export const login = async (req, res) => {
   const { email, password } = req.body;
+
   try {
-    let user = await User.findOne({ email });
-    if (!user) return res.json({ message: "User Not Find", success: false });
-    const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) return res.json({ message: "Invalid Credential", success: false });
+    // Check if user exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
 
-    const token = jwt.sign({userId:user._id},"!@#$%^&*()",{
-      expiresIn:'365d'
-    })
+    // Verify the password
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
 
-    res.json({ message: `Welcome ${user.name}`,token, success: true,});
+    // Create and send token
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    res.status(200).json({ token });
   } catch (error) {
-    res.json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
-// get All users
-export const users = async (req, res) => {
+// Profile route (Authenticated)
+export const profile = async (req, res) => {
   try {
-    let users = await User.find().sort({ createdAt: -1 });
-    res.json(users);
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json({ user });
   } catch (error) {
-    res.json(error.message);
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
-
-
-// get profile
-export const profile = async (req,res)=>{
-  res.json({user:req.user})
-}
