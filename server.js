@@ -19,9 +19,9 @@ app.use(express.json());
 // Enable CORS with credentials support
 app.use(
   cors({
-    origin:'https://front-endagri.vercel.app/',  // Frontend domain // Allow all origins (you might want to restrict this in production)
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000', // or the domain where your frontend is hosted
     methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
+    credentials: true, // Allow cookies if you're using sessions
   })
 );
 
