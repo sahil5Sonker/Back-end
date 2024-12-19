@@ -19,7 +19,10 @@ app.use(express.json());
 // Enable CORS with credentials support
 app.use(
   cors({
-    origin:true,  // Frontend domain // Allow all origins (you might want to restrict this in production)
+    origin: [
+      'http://theagrigoods.com',   // Allow http version
+      'https://www.theagrigoods.com',  // Allow https version
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
