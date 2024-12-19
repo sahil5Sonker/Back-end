@@ -17,11 +17,13 @@ const app = express();
 app.use(express.json());
 
 // Enable CORS with credentials support
-const corsOptions = {
-  origin: 'https://www.theagrigoods.com', // Your frontend domain
-  credentials: true, // Allow cookies and other credentials to be sent
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
-};
+app.use(
+  cors({
+    origin:true,  // Frontend domain // Allow all origins (you might want to restrict this in production)
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
 // MongoDB connection using environment variables
 const dbURI = process.env.MONGO_URI;
