@@ -19,7 +19,7 @@ app.use(express.json());
 // Enable CORS with credentials support
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000', // or the domain where your frontend is hosted
+    origin: process.env.FRONTEND_URL || 'http://theagrigoods.com', // or the domain where your frontend is hosted
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true, // Allow cookies if you're using sessions
   })
