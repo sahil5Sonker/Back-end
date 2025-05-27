@@ -1,6 +1,30 @@
 import Image from "../Models/Images.js";
+import multer from "multer";
+import path from "path";
 
-// Get all images
+// ✅ Configure multer for single image upload
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/"); // store in /uploads
+  },
+  filename: function (req, file, cb) {
+    const uniqueName = Date.now() + "-" + file.originalname;
+    cb(null, uniqueName);
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  const ext = path.extname(file.originalname).toLowerCase();
+  if (ext === ".jpg" || ext === ".jpeg" || ext === ".png") {
+    cb(null, true);
+  } else {
+    cb(new Error("Only JPG, JPEG, and PNG files are allowed"), false);
+  }
+};
+
+export const upload = multer({ storage, fileFilter }).single("image");
+
+// ✅ Get all images
 export const getImages = async (req, res) => {
   try {
     const images = await Image.find();
@@ -10,9 +34,15 @@ export const getImages = async (req, res) => {
   }
 };
 
-// Add a new image
+// ✅ Add a new image with upload
 export const addImage = async (req, res) => {
-  const { imageUrl, title, description } = req.body;
+  const { title, description } = req.body;
+
+  if (!req.file) {
+    return res.status(400).json({ error: "Image file is required" });
+  }
+
+  const imageUrl = `/uploads/${req.file.filename}`;
 
   try {
     const newImage = new Image({ imageUrl, title, description });
@@ -23,7 +53,7 @@ export const addImage = async (req, res) => {
   }
 };
 
-// Update an image
+// ✅ Update an image (no file upload in update here)
 export const updateImage = async (req, res) => {
   const { id } = req.params;
   const { imageUrl, title, description } = req.body;
@@ -45,7 +75,7 @@ export const updateImage = async (req, res) => {
   }
 };
 
-// Delete an image
+// ✅ Delete an image
 export const deleteImage = async (req, res) => {
   const { id } = req.params;
 
