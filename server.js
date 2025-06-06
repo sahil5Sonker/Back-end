@@ -1,6 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 import cors from "cors";
 
 // Routes
@@ -27,7 +27,6 @@ const corsOptions = {
   origin: [
     "https://www.theagrigoods.com",             // Production frontend
     "http://localhost:3000",                    // Local frontend
-    "https://back-1-21sz.onrender.com"          // Backend domain (Render)
   ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE"],
@@ -60,17 +59,21 @@ app.use("/api/return", ReturnPolicyRoutes);
 app.use("/api/contact", ContactRoutes);
 app.use("/api/terms", TermsRoutes);
 
-// ✅ MongoDB connection
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("✅ Connected to MongoDB"))
-  .catch((error) => console.error("❌ MongoDB connection error:", error));
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => {
+  console.log("✅ MongoDB connection successful");
+})
+.catch((err) => {
+  console.error("❌ MongoDB connection failed:", err.message);
+  process.exit(1);
+});
+
 
 // ✅ Start server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5500;
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
 });
