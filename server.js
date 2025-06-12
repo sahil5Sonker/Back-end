@@ -1,6 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 import cors from "cors";
 
 // Routes
@@ -17,7 +17,6 @@ import ReturnPolicyRoutes from "./Routes/ReturnPolicy.js";
 import TermsRoutes from "./Routes/Terms.js";
 import footerRoutes from "./Routes/Footer.js";
 
-// Load environment variables
 dotenv.config();
 
 const app = express();
@@ -25,8 +24,8 @@ const app = express();
 // ✅ CORS configuration
 const corsOptions = {
   origin: [
-    "https://www.theagrigoods.com",             // Production frontend
-    "http://localhost:3000",                    // Local frontend
+    "https://www.theagrigoods.com",
+    "http://localhost:3000"
   ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE"],
@@ -35,6 +34,9 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+// ✅ Handle preflight requests
+app.options("*", cors(corsOptions));
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -42,7 +44,7 @@ app.use(express.urlencoded({ extended: true }));
 // Static folder
 app.use("/uploads", express.static("uploads"));
 
-// View engine (optional)
+// View engine
 app.set("view engine", "ejs");
 
 // ✅ API Routes
@@ -59,6 +61,18 @@ app.use("/api/return", ReturnPolicyRoutes);
 app.use("/api/contact", ContactRoutes);
 app.use("/api/terms", TermsRoutes);
 
+// ✅ CORS test route
+app.get("/api/test-cors", (req, res) => {
+  res.json({ message: "CORS is working correctly" });
+});
+
+// ✅ Global error handler with CORS header
+app.use((err, req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "https://www.theagrigoods.com");
+  res.status(err.status || 500).json({ message: err.message });
+});
+
+// ✅ MongoDB connection
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -70,7 +84,6 @@ mongoose.connect(process.env.MONGO_URI, {
   console.error("❌ MongoDB connection failed:", err.message);
   process.exit(1);
 });
-
 
 // ✅ Start server
 const PORT = process.env.PORT || 5500;

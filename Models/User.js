@@ -32,7 +32,10 @@ const userSchema = new mongoose.Schema({
   region: { type: String, required: true, trim: true },
   phoneNumber: { type: String, required: true, trim: true },
   countryCode: { type: String, required: true, trim: true }, // ✅ This field is required
-  role: { type: Number, default: 0 },
+   role: { type: Number, default: 0 },
+  createdAt: { type: Date, default: Date.now },
+  lastLogin: { type: Date },
+  lastLogout: { type: Date }
 });
 
 

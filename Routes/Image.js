@@ -1,22 +1,14 @@
 import express from "express";
-import {
-  getImages,
-  addImage,
-  updateImage,
-  deleteImage,
-  upload, // multer middleware
-} from "../Controllers/imagecontroller.js";
-
-import { authAdminMiddleware } from "../Middleware/auth.js";
+import { addImage, getAllImages, getImageById, updateImage, deleteImage, upload } from "../Controllers/image.js";  // Import the controller functions
 
 const router = express.Router();
 
-// Public route
-router.get("/get", getImages);
+// Routes
+router.post("/add", upload.single("image"), addImage); // Add image route, ensure upload is used as middleware
+router.get("/get", getAllImages); // Get all images
+router.get("/:id", getImageById); // Get a single image by ID
+router.put("/update/:id", upload.single("image"), updateImage); // Update image
 
-// Admin-only routes with image upload
-router.post("/add", authAdminMiddleware, upload, addImage);
-router.put("/:id", authAdminMiddleware, updateImage);
-router.delete("/:id", authAdminMiddleware, deleteImage);
+router.delete("/:id", deleteImage); // Delete image
 
 export default router;
