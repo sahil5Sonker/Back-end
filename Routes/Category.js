@@ -10,6 +10,7 @@ import {
   deleteCategory,
   assignProductToCategory,
   getProductsByCategory,
+  unassignProductFromCategory,
 } from "../Controllers/category.js";
 
 const router = express.Router();
@@ -34,6 +35,10 @@ router.get("/:id", getCategoryById);
 router.put("/update/:id", upload.single("image"), updateCategory); // Also allow updating image
 router.delete("/delet/:id", deleteCategory);
 router.get("/products/:categoryId", getProductsByCategory);
+
+router.post("/assign-product", assignProductToCategory);
+router.post("/unassign-product", unassignProductFromCategory); // New route for unassign-product
+
 
 router.post("/assign-product", assignProductToCategory);
 

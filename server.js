@@ -2,6 +2,8 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
+import { fileURLToPath } from "url"; // Import fileURLToPath
+import path from "path"; // Import path
 
 // Routes
 import categoryRoutes from "./Routes/Category.js";
@@ -21,10 +23,14 @@ dotenv.config();
 
 const app = express();
 
+// Get the directory name
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // ✅ CORS configuration
 const corsOptions = {
   origin: [
-    "https://www.theagrigoods.com",
+    "https://theagrigoods.com",
     "http://localhost:3000"
   ],
   credentials: true,
@@ -33,16 +39,14 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
-// ✅ Handle preflight requests
 app.options("*", cors(corsOptions));
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Static folder
-app.use("/uploads", express.static("uploads"));
+// Serve static files from the 'uploads' directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // View engine
 app.set("view engine", "ejs");
@@ -86,7 +90,7 @@ mongoose.connect(process.env.MONGO_URI, {
 });
 
 // ✅ Start server
-const PORT = process.env.PORT || 5500;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
 });

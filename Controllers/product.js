@@ -13,36 +13,75 @@ const storage = multer.diskStorage({
 
 
 // Create product
+// export const createProduct = async (req, res) => {
+//   try {
+//     const {
+//       title,
+//       description,
+//       category,
+//       quantity,
+//       price,
+//       isBestSeller,
+//       isFeatured,
+//       discount,
+//       discountExpiry,
+//     } = req.body;
+//     const image = req.file?.path;
+
+//     if (!image) {
+//       return res.status(400).json({ message: "Product image is required" });
+//     }
+
+//     const categoryExists = await Category.findById(category);
+//     if (!categoryExists) {
+//       return res.status(400).json({ message: "Invalid Category ID" });
+//     }
+
+//     const product = new Product({
+//       title,
+//       description,
+//       category,
+//           price,
+//       quantity,
+//       image,
+//       isBestSeller,
+//       isFeatured,
+//       discount,
+//       discountExpiry,
+//     });
+
+//     const savedProduct = await product.save();
+//     res.status(201).json(savedProduct);
+//   } catch (error) {
+//     res
+//       .status(500)
+//       .json({ message: "Failed to create product", error: error.message });
+//   }
+// };
+
+// Create a new product and link it to a category
 export const createProduct = async (req, res) => {
   try {
-    const {
-      title,
-      description,
-      category,
-      quantity,
-      price,
-      isBestSeller,
-      isFeatured,
-      discount,
-      discountExpiry,
-    } = req.body;
+    const { title, description, category, quantity, price, isBestSeller, isFeatured, discount, discountExpiry } = req.body;
     const image = req.file?.path;
 
     if (!image) {
       return res.status(400).json({ message: "Product image is required" });
     }
 
+    // Ensure the category exists
     const categoryExists = await Category.findById(category);
     if (!categoryExists) {
       return res.status(400).json({ message: "Invalid Category ID" });
     }
 
+    // Create the product
     const product = new Product({
       title,
       description,
       category,
-          price,
       quantity,
+      price,
       image,
       isBestSeller,
       isFeatured,
@@ -50,14 +89,18 @@ export const createProduct = async (req, res) => {
       discountExpiry,
     });
 
-    const savedProduct = await product.save();
+    const savedProduct = await product.save();  // Save the product to DB
+
+    // Update the category's products array with the new product ID
+    categoryExists.products.push(savedProduct._id);
+    await categoryExists.save();  // Save the updated category
+
     res.status(201).json(savedProduct);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to create product", error: error.message });
+    res.status(500).json({ message: "Failed to create product", error: error.message });
   }
 };
+
 
 export const updateProduct = async (req, res) => {
   try {
