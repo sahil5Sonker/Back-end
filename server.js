@@ -29,16 +29,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // ✅ CORS configuration
-// CORS configuration
 const corsOptions = {
   origin: [
     "https://www.theagrigoods.com",
+    "https://theagrigoods.com", // Added this domain
     "http://localhost:3000"
   ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Include OPTIONS
   allowedHeaders: ["Content-Type", "Authorization"],
 };
+
 
 // Apply CORS middleware globally
 app.use(cors(corsOptions));
