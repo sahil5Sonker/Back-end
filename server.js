@@ -17,6 +17,7 @@ import AboutRoutes from "./Routes/About.js";
 import ContactRoutes from "./Routes/Contact.js";
 import ReturnPolicyRoutes from "./Routes/ReturnPolicy.js";
 import TermsRoutes from "./Routes/Terms.js";
+import leadRoute from "./Routes/Lead.js";
 
 import footerRoutes from "./Routes/Footer.js";
 
@@ -60,6 +61,7 @@ app.set("view engine", "ejs");
 
 // ✅ API Routes
 app.use("/api/category", categoryRoutes);
+app.use("/api/lead", leadRoute);
 app.use("/api/footer", footerRoutes);
 app.use("/api/cart", cartRouter);
 app.use("/api/product", productRouter);
