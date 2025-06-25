@@ -18,15 +18,13 @@ const router = express.Router();
 // Multer setup
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    // Ensure the 'uploads/category/' directory exists
-    cb(null, 'uploads/category/');  // This directory must exist on the server
+    cb(null, "uploads/category/"); // Save in uploads/category/ folder
   },
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));  // Creating unique filenames
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname)); // Save file with unique name
   }
 });
-
 
 const upload = multer({ storage });
 
