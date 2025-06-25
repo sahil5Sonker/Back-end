@@ -6,40 +6,63 @@ import Product from "../Models/Product.js";
 export const createCategory = async (req, res) => {
   try {
     const { name, productData } = req.body;
+
+    // Handle file upload (image for category)
     const image = req.file ? req.file.filename : null;
 
-    // Create a new category
-    const newCategory = new Category({ name, image });
+    // Ensure name is provided
+    if (!name) {
+      return res.status(400).json({ message: "Category name is required" });
+    }
 
-    // Add products to the category
-    if (productData && Array.isArray(productData)) {
+    // Create a new category
+    const newCategory = new Category({
+      name,
+      image, // If an image was uploaded, save the filename
+    });
+
+    // If product data is provided, create the associated products
+    if (productData && Array.isArray(productData) && productData.length > 0) {
       for (const product of productData) {
-        // Create a new product and associate it with the category
+        // Ensure required product fields are present
+        if (!product.title || !product.price || !product.quantity) {
+          return res.status(400).json({
+            message: "Each product must have a title, price, and quantity",
+          });
+        }
+
+        // Create the new product and associate it with the category
         const newProduct = new Product({
           title: product.title,
-          description: product.description,
+          description: product.description || "",
           price: product.price,
-          category: newCategory._id, // Link product to the newly created category
+          category: newCategory._id, // Link product to category
           quantity: product.quantity,
-          image: product.image,
+          image: product.image || null, // Handle optional product image
         });
-        await newProduct.save(); // Save the product to the database
-        newCategory.products.push(newProduct._id); // Link product to category
+
+        // Save product to the database
+        await newProduct.save();
+
+        // Push product ID into category's products array
+        newCategory.products.push(newProduct._id);
       }
     }
 
-    await newCategory.save(); // Save the updated category with products
+    // Save category with products
+    await newCategory.save();
 
-    // Send response with the category
+    // Send the response with the created category
     res.status(201).json({
       message: "Category created successfully with products",
       category: newCategory,
     });
   } catch (error) {
     console.error("Error creating category:", error.message);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
+
 
 
 
