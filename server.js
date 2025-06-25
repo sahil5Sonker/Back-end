@@ -2,9 +2,8 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
-import { fileURLToPath } from "url"; // Import fileURLToPath
-import path from "path"; // Import path
-
+import path from "path"; // Import path for file paths
+import { fileURLToPath } from "url"; // Correctly import fileURLToPath
 // Routes
 import categoryRoutes from "./Routes/Category.js";
 import productRouter from "./Routes/Product.js";
@@ -18,7 +17,6 @@ import ContactRoutes from "./Routes/Contact.js";
 import ReturnPolicyRoutes from "./Routes/ReturnPolicy.js";
 import TermsRoutes from "./Routes/Terms.js";
 import leadRoute from "./Routes/Lead.js";
-
 import footerRoutes from "./Routes/Footer.js";
 
 dotenv.config();
@@ -34,13 +32,12 @@ const corsOptions = {
   origin: [
     "https://www.theagrigoods.com",
     "https://theagrigoods.com", // Added this domain
-    "http://localhost:3000"
+    "http://localhost:3000"    // Local development URL
   ],
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Include OPTIONS
-  allowedHeaders: ["Content-Type", "Authorization"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allowed methods
+  allowedHeaders: ["Content-Type", "Authorization"]
 };
-
 
 // Apply CORS middleware globally
 app.use(cors(corsOptions));
@@ -48,15 +45,14 @@ app.use(cors(corsOptions));
 // Handle preflight requests
 app.options("*", cors(corsOptions));
 
-
-// Middleware
+// Middleware for parsing JSON and form data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files from the 'uploads' directory
+// Serve static files from the 'uploads' directory (including images)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// View engine
+// View engine setup (optional, depending on your needs)
 app.set("view engine", "ejs");
 
 // ✅ API Routes
@@ -80,17 +76,12 @@ app.get("/api/test-cors", (req, res) => {
 });
 
 // ✅ MongoDB connection
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => {
-  console.log("✅ MongoDB connection successful");
-})
-.catch((err) => {
-  console.error("❌ MongoDB connection failed:", err.message);
-  process.exit(1);
-});
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("✅ MongoDB connection successful"))
+  .catch(err => {
+    console.error("❌ MongoDB connection failed:", err.message);
+    process.exit(1);
+  });
 
 // ✅ Start server
 const PORT = process.env.PORT || 5000;

@@ -25,14 +25,14 @@ import { authAdminMiddleware } from "../Middleware/auth.js";
 
 const router = express.Router();
 
-// Multer Configuration for Image Uploads
+// Multer configuration for handling file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Save images to the 'uploads' folder
+    cb(null, "uploads/"); // Upload directory
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname)); // Add unique suffix to avoid overwriting
+    cb(null, uniqueSuffix + path.extname(file.originalname)); // Unique file name
   }
 });
 
@@ -51,17 +51,17 @@ router.get("/search", searchProducts); // Search products by title
 // Product by category
 router.get("/category/:categoryId", getProductsByCategory);
 
-// Routes for special offers
+// Special offers and best sellers routes
 router.post("/specialoffer/create", authAdminMiddleware, createSpecialOffer); // Create special offer
 router.get("/specialoffer", getAllSpecialOffers); // Get all special offers
 router.get("/specialoffer/:id", authAdminMiddleware, getSpecialOfferById); // Get special offer by ID
 router.put("/specialoffer/update/:id", authAdminMiddleware, updateSpecialOffer); // Update special offer
 router.delete("/specialoffer/delete/:id", authAdminMiddleware, deleteSpecialOffer); // Delete special offer
 
-// Routes for best sellers
-router.post("/bestseller/create", createBestSeller); // Mark product as best seller
+// Best sellers
+router.post("/bestseller/create", createBestSeller); // Create best seller
 router.get("/bestseller", getBestSellers); // Get all best sellers
-router.get("/bestseller/:id", getBestSellerById); // Get specific best seller by ID
+router.get("/bestseller/:id", getBestSellerById); // Get best seller by ID
 router.put("/bestseller/update/:id", updateBestSeller); // Update best seller product
 router.delete("/bestseller/delete/:id", deleteBestSeller); // Delete best seller product
 
