@@ -2,19 +2,23 @@ import Product from "../Models/Product.js";
 import Category from "../Models/Category.js";
 import multer from "multer";
 
+// Multer storage configuration to store images locally in 'uploads/product'
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/product');  // Store files in 'uploads/product' (remove 'public' if necessary)
+  destination: (req, file, cb) => {
+    cb(null, "uploads/product");  // Ensure the folder exists
   },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));  // Save file with original extension
   }
 });
+
+const upload = multer({ storage });
 
 export const createProduct = async (req, res) => {
   try {
     const { title, description, category, quantity, price, isBestSeller, isFeatured, discount, discountExpiry } = req.body;
-    const image = req.file?.path;
+    const image = req.file?.path;  // This is the path to the uploaded image file
 
     if (!image) {
       return res.status(400).json({ message: "Product image is required" });
@@ -33,7 +37,7 @@ export const createProduct = async (req, res) => {
       category,
       quantity,
       price,
-      image,
+      image,  // Store the relative path of the image
       isBestSeller,
       isFeatured,
       discount,
@@ -52,9 +56,10 @@ export const createProduct = async (req, res) => {
   }
 };
 
+
 export const updateProduct = async (req, res) => {
   try {
-    const { title, description, category, quantity,price } = req.body;
+    const { title, description, category, quantity, price } = req.body;
     const image = req.file ? req.file.path : null;
 
     const updatedFields = {
@@ -66,13 +71,11 @@ export const updateProduct = async (req, res) => {
     };
 
     if (image) {
-      updatedFields.image = image;
+      updatedFields.image = image;  // Update the image if it's provided
     }
 
     const updatedProduct = await Product.findByIdAndUpdate(
-      req.params.id,
-      updatedFields,
-      { new: true }
+      req.params.id, updatedFields, { new: true }
     ).populate("category");
 
     if (!updatedProduct) {
@@ -84,11 +87,10 @@ export const updateProduct = async (req, res) => {
       product: updatedProduct,
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to update product", error: error.message });
+    res.status(500).json({ message: "Failed to update product", error: error.message });
   }
 };
+
 
 export const searchProducts = async (req, res) => {
   try {

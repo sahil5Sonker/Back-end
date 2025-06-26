@@ -27,25 +27,19 @@ import path from "path";
 
 const router = express.Router();
 
-// Set storage options
+// Multer storage configuration to store images locally in the 'uploads/product' directory
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    // Set the destination folder for storing uploaded files
-    cb(null, "uploads/product");  // Save files in 'uploads/product'
+  destination: (req, file, cb) => {
+    cb(null, "uploads/product");  // Store files in 'uploads/product'
   },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));  // Use the original file extension
-  },
+  filename: (req, file, cb) => {
+    // Generate unique filename using timestamp and random number
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));  // Save file with its original extension
+  }
 });
 
 const upload = multer({ storage });
-
-// Routes
-
-
-
-
 // Create product (upload single image here)
 router.put("/update/:id", authAdminMiddleware, upload.single("image"), updateProduct);
 
