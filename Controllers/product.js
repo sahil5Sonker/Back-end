@@ -4,62 +4,13 @@ import multer from "multer";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'public/uploads/product');
+    cb(null, 'uploads/product');  // Store files in 'uploads/product' (remove 'public' if necessary)
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + '-' + file.originalname);
   }
 });
 
-
-// Create product
-// export const createProduct = async (req, res) => {
-//   try {
-//     const {
-//       title,
-//       description,
-//       category,
-//       quantity,
-//       price,
-//       isBestSeller,
-//       isFeatured,
-//       discount,
-//       discountExpiry,
-//     } = req.body;
-//     const image = req.file?.path;
-
-//     if (!image) {
-//       return res.status(400).json({ message: "Product image is required" });
-//     }
-
-//     const categoryExists = await Category.findById(category);
-//     if (!categoryExists) {
-//       return res.status(400).json({ message: "Invalid Category ID" });
-//     }
-
-//     const product = new Product({
-//       title,
-//       description,
-//       category,
-//           price,
-//       quantity,
-//       image,
-//       isBestSeller,
-//       isFeatured,
-//       discount,
-//       discountExpiry,
-//     });
-
-//     const savedProduct = await product.save();
-//     res.status(201).json(savedProduct);
-//   } catch (error) {
-//     res
-//       .status(500)
-//       .json({ message: "Failed to create product", error: error.message });
-//   }
-// };
-
-// Create a new product and link it to a category
 export const createProduct = async (req, res) => {
   try {
     const { title, description, category, quantity, price, isBestSeller, isFeatured, discount, discountExpiry } = req.body;
@@ -100,7 +51,6 @@ export const createProduct = async (req, res) => {
     res.status(500).json({ message: "Failed to create product", error: error.message });
   }
 };
-
 
 export const updateProduct = async (req, res) => {
   try {
@@ -159,7 +109,6 @@ export const searchProducts = async (req, res) => {
   }
 };
 
-// Get all products
 export const getAllProducts = async (req, res) => {
   try {
     const { type } = req.query;
@@ -189,13 +138,6 @@ export const getAllProducts = async (req, res) => {
     });
   }
 };
-
-
-
-
-
-
-// Get single product by ID
 export const getProductById = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).populate("category");
@@ -259,16 +201,7 @@ export const createSpecialOffer = async (req, res) => {
   }
 };
 
-// Get all special offers
-// export const getAllSpecialOffers = async (req, res) => {
-//   try {
-//     const products = await Product.find({ isSpecialOffer: true });
-//     res.status(200).json({ success: true, products });
-//   } catch (error) {
-//     res.status(500).json({ message: "Server error", error });
-//   }
-// };
-// 
+
 export const getAllSpecialOffers = async (req, res) => {
   try {
     const limit = req.query.limit ? parseInt(req.query.limit) : 0;   // ✅ add this
@@ -332,24 +265,6 @@ export const deleteSpecialOffer = async (req, res) => {
   }
 };
 
-
-// Create a best seller product (mark existing product)
-
-// Get all best seller products
-// Example route handler
-// Controller: getBestSellers.js
-// export const getBestSellers = async (req, res) => {
-//   try {
-//     console.log("🔍 Fetching best sellers...");
-//     const products = await Product.find({ isBestSeller: true });
-//     console.log("✅ Best sellers fetched:", products);
-//     res.status(200).json({ products });
-//   } catch (error) {
-//     console.error("❌ Best seller fetch error:", error);
-//     res.status(500).json({ message: "Server error", error: error.message });
-//   }
-// };
-// Backend: getBestSellers
 export const getBestSellers = async (req, res) => {
   try {
     const limit = req.query.limit ? parseInt(req.query.limit) : 0;  // ✅ allow optional limit
@@ -359,12 +274,6 @@ export const getBestSellers = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-
-
-
-
-
-// Mark product as best seller
 export const createBestSeller = async (req, res) => {
   try {
     const { productId } = req.body;
@@ -387,8 +296,6 @@ export const createBestSeller = async (req, res) => {
   }
 };
 
-
-// Get best seller by ID
 export const getBestSellerById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -402,7 +309,6 @@ export const getBestSellerById = async (req, res) => {
   }
 };
 
-  // Update best seller product details
 export const updateBestSeller = async (req, res) => {
   try {
     const { id } = req.params;
@@ -440,8 +346,6 @@ export const deleteBestSeller = async (req, res) => {
     res.status(500).json({ message: "Server error", error });
   }
 };
-
-
 
 // Get latest added products
 export const getNewArrivalProducts = async (req, res) => {
