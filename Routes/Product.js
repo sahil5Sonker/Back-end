@@ -1,40 +1,54 @@
+import {
+    createProduct,
+    getAllProducts,
+    getProductById,
+    deleteProduct,
+  
+    getProductsByCategory,
+    updateProduct,
+    getSpecialOfferById,
+    updateSpecialOffer,
+    deleteSpecialOffer,
+    createBestSeller,
+    getBestSellerById,
+    updateBestSeller,
+    deleteBestSeller,
+    searchProducts,
+    getAllSpecialOffers,
+    getBestSellers,
+    createSpecialOffer,
+    getNewArrivalProducts
+ 
+  } from "../Controllers/product.js";
 import express from "express";
+import {authAdminMiddleware} from "../Middleware/auth.js";
 import multer from "multer";
 import path from "path";
-import { authAdminMiddleware } from "../Middleware/auth.js";
-
-// Cloudinary setup import
-import storage from "../helper/cloudinary.js";
-
-// Controllers
-import {
-  createProduct,
-  getAllProducts,
-  getProductById,
-  deleteProduct,
-  getProductsByCategory,
-  updateProduct,
-  getSpecialOfferById,
-  updateSpecialOffer,
-  deleteSpecialOffer,
-  createBestSeller,
-  getBestSellerById,
-  updateBestSeller,
-  deleteBestSeller,
-  searchProducts,
-  getAllSpecialOffers,
-  getBestSellers,
-  createSpecialOffer,
-  getNewArrivalProducts,
-} from "../Controllers/product.js";
 
 const router = express.Router();
 
-// Multer configuration using Cloudinary Storage
+// Set storage options
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    // Set the destination folder for storing uploaded files
+    cb(null, "uploads/product");  // Save files in 'uploads/product'
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));  // Use the original file extension
+  },
+});
+
 const upload = multer({ storage });
+
+// Routes
+
+
+
 
 // Create product (upload single image here)
 router.put("/update/:id", authAdminMiddleware, upload.single("image"), updateProduct);
+
 
 router.post("/add", authAdminMiddleware, upload.single("image"), createProduct);
 
@@ -52,14 +66,21 @@ router.get("/search", searchProducts);
 // Delete a product
 router.delete("/:id", authAdminMiddleware, deleteProduct);
 
-router.get("/bestseller", getBestSellers);  // Specific first
+
+
+
+
+router.get("/bestseller", getBestSellers);            // Specific first
 router.post("/bestseller/create", createBestSeller);
 router.delete("/bestseller/delete/:id", deleteBestSeller);
 router.get("/bestseller/:id", getBestSellerById);
 router.put("/bestseller/update/:id", updateBestSeller);
 
+
+
 // Get all special offers
 router.post("/specialoffer/create", authAdminMiddleware, createSpecialOffer);   
+
 
 router.get("/specialoffer", getAllSpecialOffers); // ✅ new recommended route
 
@@ -72,8 +93,13 @@ router.put("/specialoffer/update/:id", authAdminMiddleware, updateSpecialOffer);
 // Delete
 router.delete("/specialoffer/delete/:id", authAdminMiddleware, deleteSpecialOffer);
 
+
+
 router.get('/new-arrivals', getNewArrivalProducts);
 
 router.get("/:id", getProductById);
+
+
+
 
 export default router;

@@ -12,16 +12,14 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
     quantity: { type: Number, required: true, min: 0 },
-    
-    // Cloudinary URL will be stored here
-    image: { type: String, required: true },  // Image URL from Cloudinary
+    image: { type: String, required: true },
 
     isBestSeller: { type: Boolean, default: false },
     isFeatured: { type: Boolean, default: false },
 
     // Special Offer Fields
     isSpecialOffer: { type: Boolean, default: false },
-    discount: { type: Number, default: 0 },
+    discount: { type: Number, default: 0 }, 
     discountExpiry: { type: Date, default: null },
   },
   { timestamps: true }
