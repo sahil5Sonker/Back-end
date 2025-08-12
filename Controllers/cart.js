@@ -30,7 +30,6 @@ export const getAdminAllCarts = async (req, res) => {
     return res.status(500).json({ msg: "Error fetching carts" });
   }
 };
-/** ✅ Add Product to Cart */
 export const addToCart = async (req, res) => {
   try {
     console.log("🔥 Incoming Body:", req.body);
@@ -131,8 +130,6 @@ export const addToCart = async (req, res) => {
   }
 };
 
-/** ✅ Get User's Cart */
-/** ✅ Get User's Cart with fixed image URLs */
 export const getUserCart = async (req, res) => {
   try {
     const userId = req.user._id;
